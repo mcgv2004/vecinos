@@ -1,0 +1,7 @@
+{% extends 'registro/index.html' %}
+{% block title %} Inicio .. Bienvenidos{% endblock %}
+{% block content %}
+    {% for t in tabla %}
+    	{{t.nombre}} {{t.casa.numero}} {{t.casa.calle.calle}} {{t.telefono}} <br>
+    {% endfor %}
+{% endblock %}

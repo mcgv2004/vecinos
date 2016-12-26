@@ -10,3 +10,6 @@ class AgregaVecinoForm(forms.Form):
     numero = forms.IntegerField()
     telefono = forms.IntegerField()
     nombre = forms.CharField()
+
+class AgregaCalleForm(forms.Form):
+    calle = forms.CharField()
