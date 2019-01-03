@@ -8,3 +8,5 @@ urlpatterns = [
     url(r'^', include('vecinos.apps.registro.urls')),
     url(r'^admin/', admin.site.urls),
 ]
+if settings.DEBUG is True:
+	urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 

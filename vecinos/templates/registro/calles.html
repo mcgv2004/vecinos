@@ -1,0 +1,36 @@
+{% extends 'registro/index.html' %}
+{% block js%}
+  {{ block.super }}
+  <script type="text/javascript">
+  console.log("kk");
+  $(document).ready(function() {
+  $('.ll').click(function(){
+    var catid;
+    console.log("1")
+    catid = $(this).attr("data-catid")
+    $.ajax(
+      {
+        type: "GET",
+        url: "/like_calles",
+        data:{
+          id_calle: catid
+        },
+        success: function(data)
+        {
+          $('#like'+catid).remove();
+          $('#message').text(data);
+        }
+      })
+    });
+  });
+  console.log("salida")
+  </script>
+  {% endblock%}
+{% block content %}
+  <p id="message"></p>
+  {% for calle in calles%}
+    <h3> {{ forloop.counter }} {{ calle.calle}} {{calle.id}} </h3>
+    <a class="ll" id="like{{calle.id}}" href="#" data-catid="{{calle.id}}">Like</a>
+  {% endfor %}
+{% endblock %}
+

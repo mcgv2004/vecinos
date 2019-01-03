@@ -11,5 +11,7 @@ class AgregaVecinoForm(forms.Form):
     telefono = forms.IntegerField()
     nombre = forms.CharField()
 
-class AgregaCalleForm(forms.Form):
-    calle = forms.CharField()
+class CasaForm(forms.ModelForm):
+	class Meta:
+		model = Casa
+		fields = ['calle', 'numero']

@@ -1,0 +1,12 @@
+{% extends 'registro/index.html' %}
+{% block title %} Ingreso casas {% endblock %}
+{% block content %}
+<div class="new">
+	<h2> Crear nueva casa</h2>
+	<form method="POST" action=".">
+		{%csrf_token%}
+		{{form.as_p}}
+		<input type="submit" value="Submit" />
+	</form>
+</div>
+{% endblock %}

@@ -1,63 +1,100 @@
-from django.shortcuts import render, redirect
-from vecinos.apps.registro.forms import AgregaVecinoForm, AgregaCalleForm
-from vecinos.apps.registro.models import Calle, Vecino, Casa
+from django.shortcuts import render, redirect, get_object_or_404
+from vecinos.apps.registro.forms import CasaForm
+from vecinos.apps.registro.models import Calle, Casa, Like, Prevision, TipoBono, BonoPrevision
+from django.utils.text import slugify
+from django.http import HttpResponseRedirect, HttpResponseServerError
+from django.http import HttpResponse
 
-def index_views(request):
-	return render(request, 'registro/index.html')
 
-def registro_vecino_views(request):
-	if request.POST.get("Aceptar"):
-		form = AgregaVecinoForm(request.POST, request.FILES)
-		if form.is_valid():
-				calle = form.cleaned_data['calle']
-				numero = form.cleaned_data['numero']
-				telefono = form.cleaned_data['telefono']
-				nombre = form.cleaned_data['nombre']
-				v = Vecino.objects.filter(telefono=telefono)
-				c = Calle.objects.filter(calle=calle)[0]
-				casa = Casa.objects.filter(numero=numero, calle=c)
-				if not v:
-					vec = Vecino()
-					vec.nombre = nombre
-					vec.telefono = telefono
-					if not casa:
-						ca = Casa()
-						ca.calle = c
-						ca.numero = numero
-						ca.save()
-						vec.casa = ca
-					else:
-						vec.casa = casa[0]
-					vec.save()
-				return redirect(listado_vecinos_views)
-	else:
-		formulario = AgregaVecinoForm()
-		ctx = {'form': formulario}
-		return render(request, 'registro/addVecino.html', ctx)
+def calles(request):
+    print("este")
+    fonasa = Prevision.objects.get(nombre='Fonasa')
+    papel = TipoBono.objects.get(tipo_bono='Papel')
+    rel1 = BonoPrevision(bono=papel, prevision=fonasa)
+    rel1.save()
+    print('rel', rel1)
+    calles = Calle.objects.all()
+    return render(request, 'registro/calles.html', {'calles': calles})
 
-def registro_calle_views(request):
-	if request.POST.get("Aceptar"):
-		calle = AgregaCalleForm(request.POST, request.FILES)
-		if calle.is_valid():
-			calleNueva = calle.cleaned_data['calle']
-			c = Calle.objects.filter(calle=calleNueva)
-			if not c:
-				ca = Calle()
-				ca.calle = calleNueva
-				ca.save()
-				return redirect(listado_calles_views)
-	else:
-		formulario = AgregaCalleForm()
-		ctx = {'form': formulario}
-		return render(request, 'registro/addCalle.html', ctx)
 
-def listado_calles_views(request):
-	calles = Calle.objects.all()
-	ctx = {'tabla': calles}
-	return render(request, 'registro/listadoCalles.html', ctx)
+def like_calles(request):
+    if request.method == 'GET':
+        id_calle = request.GET['id_calle']
+        calle_liked = Calle.objects.get(pk=id_calle)
+        m = Like(like=calle_liked)
+        m.save()
+        return HttpResponse("success!!")
+    else:
+        return HttpResponse("no es GET")
 
-def listado_vecinos_views(request):
-	vecinos = Vecino.objects.all()
-	ctx = {'tabla': vecinos}
-	return render(request, 'registro/listadoVecinos.html', ctx)
 
+def create_calle(request):
+    error_msj = "No hay datos"
+    if request.method == 'POST':
+        calle = request.POST.copy()
+        if calle.get('calle'):
+            calleNueva = calle['calle']
+            slugNueva = slugify(calleNueva)
+            if Calle.objects.filter(slug=slugNueva).count() > 0:
+                error_msj = "calle ya existe"
+            else:
+                ca = Calle(calle=calleNueva, slug=slugNueva)
+                ca.save()
+                return HttpResponseRedirect(ca.get_absolute_url())
+        else:
+            error_msj = "Campo obligatorio"
+    return HttpResponseServerError(error_msj)
+
+
+def update_calle(request, slug):
+    if request.method == "POST":
+        post = request.POST.copy()
+        calle = Calle.objects.get(slug=slug)
+        if post.get('calle'):
+            slugNueva = slugify(post.get('calle'))
+            if slug != slugNueva and \
+               Calle.objects.filter(slug=slugNueva).count() > 0:
+                error_msg = "calle ya existe."
+                return HttpResponseServerError(error_msg)
+            calle.slug = slugNueva
+            calle.calle = post['calle']
+            calle.save()
+            return HttpResponseRedirect('/listCalles/')
+    error_msg = "No POST data sent."
+    return HttpResponseServerError(error_msg)
+
+
+def list_casa(request, template_name="registro/casa_list.html"):
+    casas = Casa.objects.all()
+    return render(request, template_name, {'object_list': casas})
+
+
+def create_casa(request, template_name="registro/casa_form.html"):
+    if request.method == "GET":
+        print("entra a get")
+        form = CasaForm()
+    else:
+        print("entra a POST")
+        form = CasaForm(request.POST or None)
+        if form.is_valid():
+            form.save()
+            return redirect(list_casa)
+    return render(request, template_name, {'form': form})
+
+
+def update_casa(request, id, template_name="registro/casa_form.html"):
+    casa = get_object_or_404(Casa, pk=id)
+    form = CasaForm(request.POST or None, instance=casa)
+    if form.is_valid():
+        form.save()
+        return redirect(list_casa)
+    return render(request, template_name, {'form': form})
+
+
+def delete_casa(request, id,
+                template_name="registro/casa_confirm_delete.html"):
+    casa = get_object_or_404(Casa, pk=id)
+    if request.method == "POST":
+        casa.delete()
+        return redirect(list_casa)
+    return render(request, template_name, {'object': casa})

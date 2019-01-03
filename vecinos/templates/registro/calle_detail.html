@@ -1,0 +1,17 @@
+{% extends 'registro/index.html' %}
+{% block content %}
+
+<div class="detail">
+  <form method="post" action="update/">
+  	{%csrf_token%}
+  <div class="text">
+    <label for="calle">Calle</label>
+    <input type="text" name="calle" id="calle" value="{{ object.calle }}">
+    <label for="slug">Slug</label>
+    <input type="text" name="slug" id="slug" value="{{ object.slug }}">
+  </div>
+  <input class="submit" type="submit" name="update" value="update calle">
+  <input class="submit" type="submit" name="delete" value="delete calle">
+  </form>
+</div>
+{% endblock %}

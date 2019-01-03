@@ -1,0 +1,10 @@
+{% extends 'registro/index.html' %}
+{% block title %} Confirma delete Casas{% endblock %}
+{% block content %}
+<div class="list">
+	<form method="post">{% csrf_token %}
+	    Are you sure you want to delete "{{ object }}" ?
+	    <input type="submit" value="Submit" />
+	</form>
+</div>
+{% endblock %}

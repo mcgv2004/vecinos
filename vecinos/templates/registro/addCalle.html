@@ -1,8 +1,0 @@
-{% extends 'registro/index.html' %}
-{% block title %} Inicio .. Bienvenidos{% endblock %}
-{% block content %}
-    <form action="" method="post">{% csrf_token %}
-        {{form.as_p}}
-        <input type="submit" value="Aceptar" name="Aceptar" id="Aceptar"/>
-    </form>
-{% endblock %}

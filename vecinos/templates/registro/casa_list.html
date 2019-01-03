@@ -1,0 +1,17 @@
+{% extends 'registro/index.html' %}
+{% block title %} Lista Casas{% endblock %}
+{% block content %}
+<div class="list">
+	<h2> Casas</h2>
+	<ol id="calles">
+		{% for object in object_list %}
+		<li>
+			{{object}}
+			<a href="{% url 'casa_edit' object.id %}">Edit</a>
+			<a href="{% url 'casa_delete' object.id %}">Delete</a>
+		</li>
+		{% endfor %}
+		<a href="{% url 'casa_new' %}">Nueva</a>
+	</ol>
+</div>
+{% endblock %}

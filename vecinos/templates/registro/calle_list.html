@@ -1,0 +1,38 @@
+{% extends 'registro/index.html' %}
+{% block title %} Inicio .. Bienvenidos{% endblock %}
+{% block content %}
+<div class="new">
+	<h2> Crear nueva calle</h2>
+	<form method="POST" action="/createCalle/">
+	{%csrf_token%}
+		<label for="calle">Calle</label>
+		<input type="text" name="calle" id="calle">
+		<label for="slug">Slug</label>
+		<input type="text" name="slug" id="slug">
+		<input type="submit" value="crear Nota">
+	</form>
+</div>
+<div class="list">
+	<h2> Calles</h2>
+	<ol id="calles">
+		{% for object in object_list %}
+		<li><a href="{{object.get_absolute_url}}">{{object.calle}}</a></li>
+		{% endfor %}
+	</ol>
+</div>
+<script type="text/javascript">
+	var create_calle = function() {
+	var calle = $("#calle").val()
+	var slug = $("#slug").val()
+	if (calle != "") {
+	  var data = { title:title };
+	  var args = { type:"POST", url:"/createCalle/", data:data, complete:done };
+	  $.ajax(args);
+	}
+	else {
+	  // display an explanation of failure
+	}
+	return false;
+};
+</script>
+{% endblock %}
