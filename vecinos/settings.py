@@ -124,8 +124,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 
-
-
 # Parse database configuration from $DATABASE_URL
 # import dj_database_url
 # DATABASES['default'] =  dj_database_url.config()
@@ -137,7 +135,7 @@ DATABASES['default'].update(db_from_env)
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
- 
+
 
 # Static asset configuration
 
@@ -146,8 +144,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+print('MEDIA_ROOT', MEDIA_ROOT)
+print STATIC_ROOT
 MEDIA_URL = '/media/'
- 
+
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
