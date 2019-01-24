@@ -5,6 +5,7 @@ from django.utils.text import slugify
 from django.http import HttpResponseRedirect, HttpResponseServerError
 from django.http import HttpResponse
 
+# comentario en el local github
 
 def calles(request):
     print("este")
